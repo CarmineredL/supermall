@@ -4,7 +4,12 @@
     <home-swiper :banners="banners" />
     <recommend-view :recommends="recommends" />
     <feature-view />
-    <tab-cotrol :titles="['流行', '新款', '精选']" class="tab-cotrol" />
+    <tab-cotrol
+      :titles="['流行', '新款', '精选']"
+      class="tab-cotrol"
+      @tabClick="tabClick"
+    />
+    <goods-list :goods="showGoods" />
     <ul>
       <li>1</li>
       <li>2</li>
@@ -80,12 +85,13 @@
 <script>
 import NavBar from "components/common/navbar/NavBar";
 import TabCotrol from "components/content/tabCotrol/TabCotrol.vue";
+import GoodsList from "components/content/goods/GoodsList.vue";
 
 import HomeSwiper from "./ChildComps/HomeSwiper";
 import RecommendView from "./ChildComps/RecommendView";
 import FeatureView from "./ChildComps/FeatureView.vue";
 
-import { getHomeMultidata } from "network/home";
+import { getHomeMultidata, getHomeGoods } from "network/home";
 
 export default {
   name: "Home",
@@ -95,24 +101,67 @@ export default {
     HomeSwiper,
     RecommendView,
     FeatureView,
+    GoodsList
   },
   data() {
     return {
       banners: [],
       recommends: [],
-      keywords: [],
-      dKeywords: [],
+      goods: {
+        pop: { page: 0, list: [] },
+        new: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
+      },
+      currentType: "pop"
     };
   },
-  created() {
-    getHomeMultidata().then((res) => {
-      console.log(res.data);
-      this.banners = res.data.banner.list;
-      this.recommends = res.data.recommend.list;
-      this.keywords = res.data.keywords;
-      this.dKeywords = res.data.dKeyword;
-    });
+  computed: {
+    showGoods() {
+      return this.goods[this.currentType].list;
+    }
   },
+  created() {
+    //请求多个数据
+    this.getHomeMultidata();
+    //请求商品参数
+    this.getHomeGoods("pop");
+    this.getHomeGoods("new");
+    this.getHomeGoods("sell");
+  },
+  methods: {
+    //事件监听相关方法
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = "pop";
+          break;
+        case 1:
+          this.currentType = "new";
+          break;
+        case 2:
+          this.currentType = "sell";
+          break;
+      }
+    },
+    //网络请求相关方法========================================
+    getHomeMultidata() {
+      getHomeMultidata().then(res => {
+        // console.log(res.data);
+        this.banners = res.data.banner.list;
+        this.recommends = res.data.recommend.list;
+      });
+    },
+    getHomeGoods(type) {
+      //页面每次加1
+      const page = this.goods[type].page + 1;
+      getHomeGoods(type, page).then(res => {
+        // console.log(page);
+        this.goods[type].list.push(...res.data.list);
+        this.goods[type].page += 1;
+        // console.log(this.goods[type].list);
+      });
+    }
+  }
 };
 </script>
 
@@ -135,6 +184,5 @@ export default {
   left: 0;
   right: 0;
   background: white;
-  z-index: -1;
 }
 </style>

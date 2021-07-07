@@ -20,19 +20,20 @@ export default {
       type: Array,
       default() {
         return [];
-      },
-    },
+      }
+    }
   },
   data() {
     return {
-      currentIndex: 0,
+      currentIndex: 0
     };
   },
   methods: {
     itemClick(index) {
       this.currentIndex = index;
-    },
-  },
+      this.$emit("tabClick", index);
+    }
+  }
 };
 </script>
 
@@ -54,6 +55,6 @@ export default {
   color: var(--color-high-text);
 }
 .active span {
-  border-bottom: 0.03rem solid var(--color-high-text);
+  border-bottom: 0.02rem solid var(--color-high-text);
 }
 </style>

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "TabBar",
+  name: "TabBar"
 };
 </script>
 
@@ -20,5 +20,6 @@ export default {
   right: 0;
   box-shadow: 0px -1px 2px 0px rgba(100, 100, 100, 0.1);
   background: white;
+  z-index: 9;
 }
 </style>
