@@ -1,84 +1,25 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物车</div></nav-bar>
-    <home-swiper :banners="banners" />
-    <recommend-view :recommends="recommends" />
-    <feature-view />
-    <tab-cotrol
-      :titles="['流行', '新款', '精选']"
-      class="tab-cotrol"
-      @tabClick="tabClick"
-    />
-    <goods-list :goods="showGoods" />
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>11</li>
-      <li>12</li>
-      <li>13</li>
-      <li>14</li>
-      <li>15</li>
-      <li>16</li>
-      <li>17</li>
-      <li>18</li>
-      <li>19</li>
-      <li>20</li>
-      <li>21</li>
-      <li>22</li>
-      <li>23</li>
-      <li>24</li>
-      <li>25</li>
-      <li>26</li>
-      <li>27</li>
-      <li>28</li>
-      <li>29</li>
-      <li>30</li>
-      <li>31</li>
-      <li>32</li>
-      <li>33</li>
-      <li>34</li>
-      <li>35</li>
-      <li>36</li>
-      <li>37</li>
-      <li>38</li>
-      <li>39</li>
-      <li>40</li>
-      <li>41</li>
-      <li>42</li>
-      <li>43</li>
-      <li>44</li>
-      <li>45</li>
-      <li>46</li>
-      <li>47</li>
-      <li>48</li>
-      <li>49</li>
-      <li>50</li>
-      <li>51</li>
-      <li>52</li>
-      <li>53</li>
-      <li>54</li>
-      <li>55</li>
-      <li>56</li>
-      <li>57</li>
-      <li>58</li>
-      <li>59</li>
-      <li>60</li>
-      <li>61</li>
-      <li>62</li>
-      <li>63</li>
-      <li>64</li>
-      <li>65</li>
-      <li>66</li>
-      <li>67</li>
-    </ul>
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <feature-view />
+      <tab-cotrol
+        :titles="['流行', '新款', '精选']"
+        class="tab-cotrol"
+        @tabClick="tabClick"
+      />
+      <goods-list :goods="showGoods" />
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -86,6 +27,8 @@
 import NavBar from "components/common/navbar/NavBar";
 import TabCotrol from "components/content/tabCotrol/TabCotrol.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
+import Scroll from "components/common/scroll/Scroll.vue";
+import BackTop from "components/content/backTop/BackTop";
 
 import HomeSwiper from "./ChildComps/HomeSwiper";
 import RecommendView from "./ChildComps/RecommendView";
@@ -101,7 +44,9 @@ export default {
     HomeSwiper,
     RecommendView,
     FeatureView,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
   data() {
     return {
@@ -112,7 +57,8 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
       },
-      currentType: "pop"
+      currentType: "pop",
+      isShowBackTop: false
     };
   },
   computed: {
@@ -143,6 +89,15 @@ export default {
           break;
       }
     },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    contentScroll(position) {
+      this.isShowBackTop = -position.y > 1000;
+    },
+    loadMore() {
+      this.getHomeGoods(this.currentType);
+    },
     //网络请求相关方法========================================
     getHomeMultidata() {
       getHomeMultidata().then(res => {
@@ -159,6 +114,7 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // console.log(this.goods[type].list);
+        this.$refs.scroll.finishPullUp();
       });
     }
   }
@@ -168,6 +124,8 @@ export default {
 <style scoped>
 #home {
   padding-top: 0.44rem;
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
   background: var(--color-tint);
@@ -184,5 +142,13 @@ export default {
   left: 0;
   right: 0;
   background: white;
+}
+.content {
+  /* height: calc(100% - 0.49rem); */
+  position: absolute;
+  top: 0.44rem;
+  bottom: 0.49rem;
+  left: 0;
+  right: 0;
 }
 </style>

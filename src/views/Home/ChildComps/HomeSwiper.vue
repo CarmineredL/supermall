@@ -21,11 +21,10 @@ export default {
       type: Array,
       default() {
         return [];
-      },
-    },
-  },
+      }
+    }
+  }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

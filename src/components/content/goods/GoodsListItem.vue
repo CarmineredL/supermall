@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="" />
+    <img :src="goodsItem.show.img" alt="" @load="imgLoad" />
     <div class="item-title">{{ goodsItem.title }}</div>
     <div class="item-footer">
       <span class="price">￥{{ goodsItem.price }}</span>
@@ -18,6 +18,11 @@ export default {
       default() {
         return {};
       }
+    }
+  },
+  methods: {
+    imgLoad() {
+      console.log("图片加载");
     }
   }
 };
