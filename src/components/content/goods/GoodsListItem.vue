@@ -22,7 +22,8 @@ export default {
   },
   methods: {
     imgLoad() {
-      console.log("图片加载");
+      //发射事件总线的图片加载事件
+      this.$bus.$emit("itemImageLoad");
     }
   }
 };

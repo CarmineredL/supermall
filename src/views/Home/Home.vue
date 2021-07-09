@@ -17,6 +17,7 @@
         class="tab-cotrol"
         @tabClick="tabClick"
       />
+      <!-- <goods-list :goods="showGoods" @imgLoad="imgLoad" /> -->
       <goods-list :goods="showGoods" />
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop" />
@@ -58,7 +59,8 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: false
+      isShowBackTop: false,
+      timer: null
     };
   },
   computed: {
@@ -73,6 +75,17 @@ export default {
     this.getHomeGoods("pop");
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
+  },
+  mounted() {
+    //接收事件总线的图片加载事件
+    //监听item中的图片加载完成
+    this.$bus.$on("itemImageLoad", () => {
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
+        console.log(111);
+        this.$refs.scroll.refresh();
+      }, 100);
+    });
   },
   methods: {
     //事件监听相关方法
@@ -98,6 +111,10 @@ export default {
     loadMore() {
       this.getHomeGoods(this.currentType);
     },
+    // imgLoad() {
+    //   this.$refs.scroll.scroll.refresh();
+    // },
+
     //网络请求相关方法========================================
     getHomeMultidata() {
       getHomeMultidata().then(res => {

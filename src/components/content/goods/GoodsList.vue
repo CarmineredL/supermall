@@ -1,6 +1,11 @@
 <template>
   <div class="goods">
-    <!-- <h2>{{ goods }}</h2> -->
+    <!-- <goods-list-item
+      v-for="item in goods"
+      :key="item.iid"
+      :goods-item="item"
+      @imgLoad="imgLoad"
+    /> -->
     <goods-list-item v-for="item in goods" :key="item.iid" :goods-item="item" />
   </div>
 </template>
@@ -17,6 +22,11 @@ export default {
         return [];
       }
     }
+  },
+  methods: {
+    // imgLoad() {
+    //   this.$emit("imgLoad");
+    // }
   }
 };
 </script>

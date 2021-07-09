@@ -39,7 +39,6 @@ export default {
       //  发射滚动坐标
       this.$emit("scroll", position);
     });
-    console.log(this.scroll);
 
     this.scroll.on("pullingUp", () => {
       // 发射滚动到底部事件
@@ -49,11 +48,13 @@ export default {
   },
   methods: {
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
     finishPullUp() {
-      this.scroll.finishPullUp();
-      this.scroll.refresh();
+      this.scroll && this.scroll.finishPullUp();
+    },
+    refresh() {
+      this.scroll && this.scroll.refresh();
     }
   }
 };
