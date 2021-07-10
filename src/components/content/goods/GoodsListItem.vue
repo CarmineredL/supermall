@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <img :src="goodsItem.show.img" alt="" @load="imgLoad" />
     <div class="item-title">{{ goodsItem.title }}</div>
     <div class="item-footer">
@@ -24,6 +24,15 @@ export default {
     imgLoad() {
       //发射事件总线的图片加载事件
       this.$bus.$emit("itemImageLoad");
+    },
+    itemClick() {
+      this.$router.push("/detail/" + this.goodsItem.iid);
+      // this.$router.push({
+      //   path: "/detail/",
+      //   query: {
+      //     iid: this.goodsItem.iid
+      //   }
+      // });
     }
   }
 };

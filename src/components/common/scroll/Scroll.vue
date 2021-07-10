@@ -9,8 +9,12 @@
 <script>
 import BScroll from "@better-scroll/core";
 import Pullup from "@better-scroll/pull-up";
+import ObserveDom from "@better-scroll/observe-dom";
+import ObserveImage from "@better-scroll/observe-image";
 
 BScroll.use(Pullup);
+BScroll.use(ObserveDom);
+BScroll.use(ObserveImage);
 export default {
   name: "Scroll",
   props: {
@@ -30,21 +34,29 @@ export default {
   },
   mounted() {
     this.scroll = new BScroll(this.$refs.wrapper, {
+      observeDom: true,
+      observeImage: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
       click: true
     });
-    this.scroll.on("scroll", position => {
-      // console.log(position.x, position.y);
-      //  发射滚动坐标
-      this.$emit("scroll", position);
-    });
-
-    this.scroll.on("pullingUp", () => {
-      // 发射滚动到底部事件
-      this.$emit("pullingUp");
-      this.scroll.finishPullUp();
-    });
+    //滚动监听位置
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", position => {
+        // console.log(position.x, position.y);
+        //  发射滚动坐标
+        this.$emit("scroll", position);
+        this.$emit("detailScroll", position);
+      });
+    }
+    //监听scroll滚动到底部
+    this.pullUpLoad &&
+      this.scroll.on("pullingUp", () => {
+        // 发射滚动到底部事件
+        this.$emit("pullingUp");
+        //默认只能加载一次
+        this.scroll.finishPullUp();
+      });
   },
   methods: {
     scrollTo(x, y, time = 300) {
@@ -55,6 +67,9 @@ export default {
     },
     refresh() {
       this.scroll && this.scroll.refresh();
+    },
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
     }
   }
 };

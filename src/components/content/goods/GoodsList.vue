@@ -1,12 +1,16 @@
 <template>
-  <div class="goods">
+  <div class="goods" v-if="goods.length">
     <!-- <goods-list-item
       v-for="item in goods"
       :key="item.iid"
       :goods-item="item"
       @imgLoad="imgLoad"
     /> -->
-    <goods-list-item v-for="item in goods" :key="item.iid" :goods-item="item" />
+    <goods-list-item
+      v-for="(item, index) in goods"
+      :key="index"
+      :goods-item="item"
+    />
   </div>
 </template>
 
