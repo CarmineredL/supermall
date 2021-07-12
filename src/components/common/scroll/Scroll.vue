@@ -46,7 +46,6 @@ export default {
         // console.log(position.x, position.y);
         //  发射滚动坐标
         this.$emit("scroll", position);
-        this.$emit("detailScroll", position);
       });
     }
     //监听scroll滚动到底部

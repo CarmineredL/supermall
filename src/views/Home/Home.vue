@@ -24,7 +24,7 @@
         @tabClick="tabClick"
         ref="tabCotrol2"
       />
-      <!-- :class="{ fixed: istabFixed }" 此路不通-->
+      <!-- :class="{ fixed: istabFixed }" 此路不通:用过用position：fixed实现吸顶效果实现不了-->
       <!-- <goods-list :goods="showGoods" @imgLoad="imgLoad" /> -->
       <goods-list :goods="showGoods" />
     </scroll>
@@ -37,7 +37,7 @@ import NavBar from "components/common/navbar/NavBar";
 import TabCotrol from "components/content/tabCotrol/TabCotrol.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
 import Scroll from "components/common/scroll/Scroll.vue";
-import BackTop from "components/content/backTop/BackTop";
+// import BackTop from "components/content/backTop/BackTop";
 
 import HomeSwiper from "./ChildComps/HomeSwiper";
 import RecommendView from "./ChildComps/RecommendView";
@@ -45,7 +45,8 @@ import FeatureView from "./ChildComps/FeatureView.vue";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
-import { debounce } from "common/utils";
+// import { debounce } from "common/utils";
+import { itemListenerMixin, backTopMixin } from "common/mixin";
 export default {
   name: "Home",
   components: {
@@ -56,7 +57,7 @@ export default {
     FeatureView,
     GoodsList,
     Scroll,
-    BackTop
+    // BackTop,
   },
   data() {
     return {
@@ -65,20 +66,21 @@ export default {
       goods: {
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] }
+        sell: { page: 0, list: [] },
       },
       currentType: "pop",
       isShowBackTop: false,
       timer: null,
       tabOffsetTop: 0,
       istabFixed: false,
-      saveY: 0
+      saveY: 0,
+      // itemImgListener: null
     };
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
-    }
+    },
   },
   created() {
     //请求多个数据
@@ -91,15 +93,20 @@ export default {
   mounted() {
     //接收事件总线的图片加载事件
     //监听item中的图片加载完成
-    const refresh = debounce(this.$refs.scroll.refresh, 50);
-    this.$bus.$on("itemImageLoad", () => {
-      refresh();
-    });
+    // ===============================实现混入
+    // this.itemImgListener = () => {
+    //   refresh();
+    //   console.log(111);
+    // };
+    // const refresh = debounce(this.$refs.scroll.refresh, 50);
+    // this.$bus.$on("itemImageLoad", this.itemImgListener);
+    // =======================================
     // this.$bus.$on("swiperImageLoad", () => {
     //this.tabOffsetTop = this.$refs.tabCotrol.$el.offsetTop;
     // console.log(this.tabOffsetTop);
     // });
   },
+  mixins: [itemListenerMixin, backTopMixin],
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY);
     this.$refs.scroll.refresh();
@@ -107,6 +114,7 @@ export default {
   deactivated() {
     // this.saveY = this.saveY;
     this.saveY = this.$refs.scroll.getScrollY();
+    this.$bus.$off("itemImageLoad", this.itemImgListener);
   },
   methods: {
     //事件监听相关方法
@@ -125,13 +133,13 @@ export default {
       this.$refs.tabCotrol1.currentIndex = index;
       this.$refs.tabCotrol2.currentIndex = index;
     },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0, 500);
-    },
+    // backClick() {
+    //   this.$refs.scroll.scrollTo(0, 0, 500);
+    // },
     contentScroll(position) {
       //1.判断BackTop是否出现
       this.isShowBackTop = -position.y > 1000;
-      //2.决定tabCotrol是否吸顶(position:fixed)
+      //2.决定tabCotrol是否吸顶(position:fixed)||出现
       this.istabFixed = -position.y > this.tabOffsetTop;
       //3.保存离开时的y坐标
       // this.saveY = -position.y;
@@ -148,7 +156,7 @@ export default {
 
     //网络请求相关方法========================================
     getHomeMultidata() {
-      getHomeMultidata().then(res => {
+      getHomeMultidata().then((res) => {
         // console.log(res.data);
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
@@ -157,15 +165,15 @@ export default {
     getHomeGoods(type) {
       //页面每次加1
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then(res => {
+      getHomeGoods(type, page).then((res) => {
         // console.log(page);
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // console.log(this.goods[type].list);
         this.$refs.scroll.finishPullUp();
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
