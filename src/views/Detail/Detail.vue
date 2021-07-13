@@ -18,6 +18,7 @@
       <goods-list :goods="recommend" ref="recommend" />
     </scroll>
     <detail-bottom-bar @addClick="addClick" />
+    <!-- <toast :message="message" :show="show" /> -->
     <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
@@ -35,16 +36,18 @@ import DetailBottomBar from "./childComps/DetailBottomBar.vue";
 import scroll from "components/common/scroll/Scroll.vue";
 import BackTop from "components/content/backTop/BackTop.vue";
 import GoodsList from "components/content/goods/GoodsList.vue";
+// import Toast from "components/common/toast/Toast.vue";
 
 import { debounce } from "common/utils";
 import { itemListenerMixin, backTopMixin } from "common/mixin";
+import { mapActions } from "vuex";
 
 import {
   getDetail,
   Goods,
   Shop,
   GoodsParam,
-  getRcommend,
+  getRcommend
 } from "network/detail";
 
 export default {
@@ -58,7 +61,8 @@ export default {
     DetailParamsInfo,
     DetailCommentInfo,
     GoodsList,
-    DetailBottomBar,
+    DetailBottomBar
+    // Toast
   },
   name: "Detail",
   data() {
@@ -76,7 +80,9 @@ export default {
       themeTopYs: [],
       // itemImgListener: null
       getThemeTopY: null,
-      currentIndex: 0,
+      currentIndex: 0
+      // message: "",
+      // show: false
     };
   },
   created() {
@@ -84,11 +90,11 @@ export default {
     // console.log(this.$route);
     this.iid = this.$route.params.id;
     // this.iid = this.$route.query.iid;
-    getRcommend().then((res) => {
+    getRcommend().then(res => {
       this.recommend = res.data.list;
     });
     //根据iid请求数据
-    getDetail(this.iid).then((res) => {
+    getDetail(this.iid).then(res => {
       // console.log(res);
       const data = res.result;
       //2.取出轮播图信息
@@ -133,6 +139,9 @@ export default {
   },
   mixins: [itemListenerMixin, backTopMixin],
   methods: {
+    ...mapActions({
+      add: "addCart"
+    }),
     // backClick() {
     //   this.$refs.scroll.scrollTo(0, 0, 500);
     // },
@@ -179,20 +188,25 @@ export default {
       product.desc = this.goods.desc;
       product.realPrice = this.goods.realPrice;
       product.iid = this.iid;
-      this.$store.dispatch("addCart", product);
+      // this.$store.dispatch("addCart", product).then(res => {
+      //   console.log(res);
+      // });
+      this.add(product).then(res => {
+        this.$toast.show(res);
+      });
     },
     imageLoad() {
       this.$refs.scroll.refresh();
     },
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 300);
-    },
+    }
   },
   updated() {},
 
   destroyed() {
     this.$bus.$off("itemImageLoad", this.itemImgListener);
-  },
+  }
 };
 </script>
 

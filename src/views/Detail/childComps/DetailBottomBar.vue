@@ -42,6 +42,7 @@ export default {
   height: 0.49rem;
   display: flex;
   text-align: center;
+  box-shadow: 0 -0.01rem 0.02rem 0 #cccccc;
 }
 .bar-item {
   flex: 1;

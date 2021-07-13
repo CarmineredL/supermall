@@ -20,9 +20,9 @@ export default {
   // }
   [ADD_COUNTER](state, payload) {
     ++payload.count
-    console.log(111);
   },
   [ADD_TO_CART](state, payload) {
+    payload.checked = true
     state.cartList.push(payload)
   },
 

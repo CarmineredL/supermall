@@ -20,16 +20,16 @@ export default {
   props: {
     probeType: {
       type: Number,
-      default: 0
+      default: 0,
     },
     pullUpLoad: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
-      scroll: null
+      scroll: null,
     };
   },
   mounted() {
@@ -38,11 +38,11 @@ export default {
       observeImage: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
-      click: true
+      click: true,
     });
     //滚动监听位置
     if (this.probeType === 2 || this.probeType === 3) {
-      this.scroll.on("scroll", position => {
+      this.scroll.on("scroll", (position) => {
         // console.log(position.x, position.y);
         //  发射滚动坐标
         this.$emit("scroll", position);
@@ -69,8 +69,8 @@ export default {
     },
     getScrollY() {
       return this.scroll ? this.scroll.y : 0;
-    }
-  }
+    },
+  },
 };
 </script>
 
