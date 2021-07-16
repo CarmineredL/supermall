@@ -9,40 +9,40 @@
 <script>
 import BScroll from "@better-scroll/core";
 import Pullup from "@better-scroll/pull-up";
-import ObserveDom from "@better-scroll/observe-dom";
+import ObserveDOM from "@better-scroll/observe-dom";
 import ObserveImage from "@better-scroll/observe-image";
 
 BScroll.use(Pullup);
-BScroll.use(ObserveDom);
+BScroll.use(ObserveDOM);
 BScroll.use(ObserveImage);
 export default {
   name: "Scroll",
   props: {
     probeType: {
       type: Number,
-      default: 0,
+      default: 0
     },
     pullUpLoad: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     return {
-      scroll: null,
+      scroll: null
     };
   },
   mounted() {
     this.scroll = new BScroll(this.$refs.wrapper, {
-      observeDom: true,
+      observeDOM: true,
       observeImage: true,
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
-      click: true,
+      click: true
     });
     //滚动监听位置
     if (this.probeType === 2 || this.probeType === 3) {
-      this.scroll.on("scroll", (position) => {
+      this.scroll.on("scroll", position => {
         // console.log(position.x, position.y);
         //  发射滚动坐标
         this.$emit("scroll", position);
@@ -69,8 +69,8 @@ export default {
     },
     getScrollY() {
       return this.scroll ? this.scroll.y : 0;
-    },
-  },
+    }
+  }
 };
 </script>
 

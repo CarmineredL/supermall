@@ -46,7 +46,7 @@ import FeatureView from "./ChildComps/FeatureView.vue";
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
 // import { debounce } from "common/utils";
-import { itemListenerMixin, backTopMixin } from "common/mixin";
+import { itemListenerMixin, backTopMixin, tabControlMixin } from "common/mixin";
 export default {
   name: "Home",
   components: {
@@ -56,7 +56,7 @@ export default {
     RecommendView,
     FeatureView,
     GoodsList,
-    Scroll,
+    Scroll
     // BackTop,
   },
   data() {
@@ -66,21 +66,21 @@ export default {
       goods: {
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
-        sell: { page: 0, list: [] },
+        sell: { page: 0, list: [] }
       },
-      currentType: "pop",
+
       isShowBackTop: false,
       timer: null,
       tabOffsetTop: 0,
       istabFixed: false,
-      saveY: 0,
+      saveY: 0
       // itemImgListener: null
     };
   },
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
-    },
+    }
   },
   created() {
     //请求多个数据
@@ -106,7 +106,7 @@ export default {
     // console.log(this.tabOffsetTop);
     // });
   },
-  mixins: [itemListenerMixin, backTopMixin],
+  mixins: [itemListenerMixin, backTopMixin, tabControlMixin],
   activated() {
     this.$refs.scroll.scrollTo(0, this.saveY);
     this.$refs.scroll.refresh();
@@ -118,21 +118,21 @@ export default {
   },
   methods: {
     //事件监听相关方法
-    tabClick(index) {
-      switch (index) {
-        case 0:
-          this.currentType = "pop";
-          break;
-        case 1:
-          this.currentType = "new";
-          break;
-        case 2:
-          this.currentType = "sell";
-          break;
-      }
-      this.$refs.tabCotrol1.currentIndex = index;
-      this.$refs.tabCotrol2.currentIndex = index;
-    },
+    // tabClick(index) {
+    //   switch (index) {
+    //     case 0:
+    //       this.currentType = "pop";
+    //       break;
+    //     case 1:
+    //       this.currentType = "new";
+    //       break;
+    //     case 2:
+    //       this.currentType = "sell";
+    //       break;
+    //   }
+    //   this.$refs.tabCotrol1.currentIndex = index;
+    //   this.$refs.tabCotrol2.currentIndex = index;
+    // },
     // backClick() {
     //   this.$refs.scroll.scrollTo(0, 0, 500);
     // },
@@ -156,7 +156,7 @@ export default {
 
     //网络请求相关方法========================================
     getHomeMultidata() {
-      getHomeMultidata().then((res) => {
+      getHomeMultidata().then(res => {
         // console.log(res.data);
         this.banners = res.data.banner.list;
         this.recommends = res.data.recommend.list;
@@ -165,15 +165,15 @@ export default {
     getHomeGoods(type) {
       //页面每次加1
       const page = this.goods[type].page + 1;
-      getHomeGoods(type, page).then((res) => {
+      getHomeGoods(type, page).then(res => {
         // console.log(page);
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
         // console.log(this.goods[type].list);
         this.$refs.scroll.finishPullUp();
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

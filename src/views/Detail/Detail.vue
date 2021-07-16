@@ -127,14 +127,14 @@ export default {
       //   this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
       //   console.log(this.themeTopYs);
       // });
-      this.getThemeTopY = debounce(() => {
-        this.themeTopYs = [];
-        this.themeTopYs.push(0);
-        this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-        this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-        this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-        this.themeTopYs.push(Number.MAX_VALUE);
-      }, 200);
+      // this.getThemeTopY = debounce(() => {
+      // this.themeTopYs = [];
+      // this.themeTopYs.push(0);
+      // this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      // this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+      // this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      // this.themeTopYs.push(Number.MAX_VALUE);
+      // }, 200);
     });
   },
   mixins: [itemListenerMixin, backTopMixin],
@@ -197,6 +197,12 @@ export default {
     },
     imageLoad() {
       this.$refs.scroll.refresh();
+      this.themeTopYs = [];
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop - 44);
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop - 44);
+      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop - 44);
+      this.themeTopYs.push(Number.MAX_VALUE);
     },
     titleClick(index) {
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 300);
